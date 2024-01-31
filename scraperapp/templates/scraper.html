@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scraper</title>
+</head>
+<body>
+    <form method="post" action="{% url 'scraper' %}">
+        {% csrf_token %}
+        <label for="url">Enter aliexpress Products URL:</label>
+        <input type="text" name="url" required>
+        <br>
+        <label for="products_number">Enter number of products:</label>
+        <input type="number" name="products_number" min="1" required>
+        <br>
+        <button type="submit">Start Scraper</button>
+    </form>
+    <br>
+
+
+    <form method="post" action="{% url 'scraper' %}">
+        {% csrf_token %}
+        <label for="url">Enter LuLu Products URL:</label>
+        <input type="text" name="url" required>
+        <br>
+        <label for="products_number">Enter number of products:</label>
+        <input type="number" name="products_number" min="1" required>
+        <br>
+        <button type="submit">Start Scraper</button>
+    </form>
+    <br>
+
+    <form method="post" action="{% url 'scraper' %}">
+        {% csrf_token %}
+        <label for="url">Enter NouN Products URL:</label>
+        <input type="text" name="url" required>
+        <br>
+        <label for="products_number">Enter number of products:</label>
+        <input type="number" name="products_number" min="1" required>
+        <br>
+        <button type="submit">Start Scraper</button>
+    </form>
+    
+</body>
+</html>
