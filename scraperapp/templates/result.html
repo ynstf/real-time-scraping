@@ -20,17 +20,17 @@
             </tr>
         </thead>
         <tbody>
-            {% for product in product_info %}
+            {% for product in products %}
                 <tr>
-                    <td>{{ product.Title }}</td>
-                    <td>{{ product.Image_URL }}</td>
-                    <td>{{ product.Price }}</td>
-                    <td>{{ product.Discount }}</td>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.image_url }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.discount }}</td>
                     <td>{{ product.original_price }}</td>
-                    <td>{{ product.Units_Sold }}</td>
-                    <td>{{ product.Shipping }}</td>
-                    <td>{{ product.Store }}</td>
-                    <td>{{ product.Product_URL }}</td>
+                    <td>{{ product.units_sold }}</td>
+                    <td>{{ product.shipping }}</td>
+                    <td>{{ product.store }}</td>
+                    <td>{{ product.product_url }}</td>
                 </tr>
             {% endfor %}
         </tbody>

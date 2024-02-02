@@ -2,3 +2,4 @@ django
 requests
 beautifulsoup4
 selenium
+django-background-tasks
