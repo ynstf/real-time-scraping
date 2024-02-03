@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-from .models import Product
+from .models import Product,AliexpressAction
 from django.http import JsonResponse
 from background_task import background
 from django.views.decorators.csrf import csrf_exempt
@@ -13,6 +13,7 @@ from background_task.models import Task
 import logging
 from django.http import JsonResponse
 from background_task.models import Task
+from django.forms.models import model_to_dict
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,15 @@ def get_scraper_status(request):
     task_exists = Task.objects.filter(task_name=task_name).exists()
     return JsonResponse({'status': 'started' if task_exists else 'not_started'})
 
+
+
+def get_task_status(request, url):
+    try:
+        task = AliexpressAction.objects.get(url=url)  # Replace YourTaskModel with your actual model
+        status = task.status  # Assuming your task model has a 'status' field
+        return JsonResponse({'status': status})
+    except AliexpressAction.DoesNotExist:
+        return JsonResponse({'status': 'not_found'})
 
 def task_status(request):
     task_name = 'scraperapp.views.scrape_products' 
@@ -33,13 +43,29 @@ def task_status(request):
         status = 'completed'
     return JsonResponse({'status': status})
 
+import ast
+import json
 def stop_task(request):
+    url = request.GET.get('url', None)
+    print(url)
     task_name = 'scraperapp.views.scrape_products'
     try:
+
         # Filter tasks with the specified task_name
         tasks = Task.objects.filter(task_name=task_name)
         # Delete all tasks in the queryset
-        tasks.delete()
+        #tasks.delete()
+
+        for task in tasks:
+            
+            task_params_str = model_to_dict(task)["task_params"]
+            task_params_list = json.loads(task_params_str)
+            print(task_params_list)
+            if task_params_list[0][0] == url:
+                task.delete()
+        
+        urls = AliexpressAction.objects.filter(url=url)
+        urls.delete()
         status = 'stopped'
     except Task.DoesNotExist:
         status = 'not_started'
@@ -233,12 +259,18 @@ def start_scraper(request):
         url = request.POST.get('url')
         products_number = int(request.POST.get('products_number', 10))
         repetition_interval = int(request.POST.get('repetition_interval', 5))  # in minutes
-        
+
         try:
             # Call the scrape_products function directly, without scheduling
             print('test')
             scrape_products(url,products_number,repetition_interval)  # Setting repeat to 0 means it will repeat indefinitely
-
+            # Save the action to the database
+            aliexpress_action = AliexpressAction.objects.create(
+                url=url,
+                products_number=products_number,
+                repetition_interval=repetition_interval,
+                status="started"
+                )
 
         except Exception as e:
             print(f"Error in scrape_products: {e}")
@@ -251,7 +283,14 @@ def start_scraper(request):
 
 
 def scraper(request):
-    return render(request, 'scraper.html')
+
+    aliexpress_actions = AliexpressAction.objects.filter(status="started")
+    #print(aliexpress_actions)
+
+    context={
+        'tasks_run':aliexpress_actions
+    }
+    return render(request, 'scraper.html',context=context)
 
 
 def result(request):

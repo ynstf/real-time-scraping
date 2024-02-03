@@ -5,69 +5,115 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
-    <form id="scraperForm" method="post" action="{% url 'start_scraper' %}">
-        {% csrf_token %}
-        <label for="url">Enter aliexpress Products URL:</label>
-        <input type="text" name="url" required><br>
+    <button type="button" id="newPage">New Page</button>
+    <br>
 
-        <label for="products_number">Enter number of products:</label>
-        <input type="number" name="products_number" value="10" required><br>
+    {% if tasks_run %}
+        {% for task in tasks_run %}
+            <form id="scraperForm{{ forloop.counter }}" method="post" action="{% url 'start_scraper' %}">
+                {% csrf_token %}
+                <label for="url">Enter aliexpress Products URL:</label>
+                <label>{{ task.url }}</label><br>
 
-        <label for="repetition_interval">Repetition Interval (minutes):</label>
-        <input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>
+                <label for="products_number">Enter number of products:</label>
+                <input type="number" name="products_number" value="10" required><br>
 
-        <button type="button" id="startScraper">Start Scraper</button>
-    </form>
+                <label for="repetition_interval">Repetition Interval (minutes):</label>
+                <input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>
+
+                <button type="button" class="startScraper">Start Scraper</button>
+            </form>
+
+            <button type="button" class="stopScraper" style="display: none;" data-url="{{ task.url }}">Stop Scraper</button>
+
+            <div class="statusDiv" style="display: none;">
+                <p>Status: <span class="status">Not Started</span></p>
+                Check the results <a class="resultLink" href="{% url 'result' %}">Results</a>.
+            </div>
+            <br><br>
+        {% endfor %}
+    {% endif %}
+
+    <br><br>
     
-    <button type="button" id="stopScraper" style="display: none;">Stop Scraper</button>
-
-    <div id="statusDiv" style="display: none;">
-        <p>Status: <span id="status">Not Started</span></p>
-        Scraping has started. Check the results <a href="{% url 'result' %}">Go to Result</a>.
-    </div>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to start the scraper
-            $("#startScraper").click(function() {
+            $(document).on("click", ".startScraper", function () {
                 $(this).prop('disabled', true);
 
-                // Make an AJAX request to start the scraper
-                $.post("{% url 'start_scraper' %}", $("#scraperForm").serialize(), function(data) {
+                // Make an AJAX request to start the scraper for the specific form
+                var form = $(this).closest("form");
+                $.post("{% url 'start_scraper' %}", form.serialize(), function (data) {
                     if (data.status === 'started' || data.status === 'already_running') {
-                        $("#status").text('Scraping has started. Check the results.');
-                        $("#statusDiv").show();
-                        $("#stopScraper").show();
+                        form.find(".status").text('Scraping has started. Check the results.');
+                        form.find(".statusDiv").show();
+                        form.find(".stopScraper").show();
+                        form.find(".startScraper").hide();
                     } else {
-                        alert("Error starting scraper");
+                        console.error("Error starting scraper");
                     }
                 });
             });
 
             // Function to stop the scraper
-            $("#stopScraper").click(function() {
-                $.get("{% url 'stop_task' %}", function(data) {
+            $(document).on("click", ".stopScraper", function () {
+                var url = $(this).data('url');
+                var form = $(this).closest("form");
+                $.get("{% url 'stop_task' %}", { url: url }, function (data) {
                     if (data.status === 'stopped') {
-                        $("#status").text('Scraping has been stopped.');
-                        $("#statusDiv").show();
-                        $("#stopScraper").hide();
+                        form.find(".status").text('Scraping for URL ' + url + ' has been stopped.');
+                        form.find(".statusDiv").show();
+                        form.find(".stopScraper").hide();
+                        form.find(".startScraper").show();
+                        console.log("good!");
                     } else {
-                        alert("Error stopping scraper");
+                        console.error("Error stopping scraper");
                     }
                 });
             });
 
+            // Function to create a new form
+            $("#newPage").click(function () {
+                var newForm = $("<form>").attr({
+                    "id": "scraperForm" + ($("form").length + 1),  // Generate a unique ID
+                    "method": "post",
+                    "action": "{% url 'start_scraper' %}"
+                });
+
+                // Append form fields
+                newForm.append('<label for="url">Enter aliexpress Products URL:</label><input type="text" name="url" required><br>');
+                newForm.append('<label for="products_number">Enter number of products:</label><input type="number" name="products_number" value="10" required><br>');
+                newForm.append('<label for="repetition_interval">Repetition Interval (minutes):</label><input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>');
+                newForm.append('<button type="button" class="startScraper">Start Scraper</button>');
+                
+                // Create "Stop Scraper" button
+                var stopButton = $('<button type="button" class="stopScraper" style="display: none;">Stop Scraper</button>');
+                stopButton.data('url', '');  // Set the URL dynamically
+                newForm.append(stopButton);
+
+                // Create "statusDiv"
+                newForm.append('<div class="statusDiv" style="display: none;">' +
+                    '<p>Status: <span class="status">Not Started</span></p>' +
+                    `Check the results <a class="resultLink" href="{% url 'result' %}">Results</a>.` +
+                    '</div>');
+
+                // Append the new form to the body
+                newForm.appendTo("body");
+            });
+
             // Function to check the scraper status on page load
             function checkScraperStatus() {
-                $.get("{% url 'get_scraper_status' %}", function(data) {
+                $.get("{% url 'get_scraper_status' %}", function (data) {
                     if (data.status === 'started') {
-                        $("#status").text('Scraping is in progress. Check the results.');
-                        $("#statusDiv").show();
-                        $("#stopScraper").show();
+                        $(".status").text('Scraping is in progress. Check the results.');
+                        $(".statusDiv").show();
+                        $(".stopScraper").show();
                     } else {
-                        $("#status").text('Not Started');
-                        $("#statusDiv").hide();
-                        $("#stopScraper").hide();
+                        $(".status").text('Not Started');
+                        $(".statusDiv").hide();
+                        $(".stopScraper").hide();
                     }
                 });
             }
@@ -76,5 +122,8 @@
             checkScraperStatus();
         });
     </script>
+
+
+
 </body>
 </html>

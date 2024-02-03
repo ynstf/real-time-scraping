@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status  # Import the 'result' view
+from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status, get_task_status  # Import the 'result' view
 
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path('start_scraper/', start_scraper, name='start_scraper'),
     path('scraper/', scraper, name='scraper'),
     path('get_scraper_status/', get_scraper_status, name='get_scraper_status'),
+    path('get_task_status/<str:url>/', get_task_status, name='get_task_status'),
     path('result/', result, name='result'),
     # ... other URL patterns ...
 ]
