@@ -302,3 +302,12 @@ def result(request,url):
     # Pass the products to the template
     context = {'products': products}
     return render(request, 'result.html', context)
+
+
+def dashboard(request):
+    shoops = [
+        {"name":"Alieexpress","url":"/aliexpress/","image":"https://ae01.alicdn.com/kf/Sa0202ec8a96a4085962acfc27e9ffd04F/1080x1080.jpg"},
+        ]
+    context = {"shoops":shoops}
+    return render(request, 'dashboard.html', context)
+

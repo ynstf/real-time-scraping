@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h1>Dashboard</h1>
+
+{% for shop in shoops %}
+    <div>
+        <h2>{{ shop.name }}</h2>
+        <dive><a href="{{ shop.url }}">
+            <img src="{{ shop.image }}" alt="{{ shop.name }}" width="100" height="100">
+            </a>
+        </dive>
+    </div>
+{% endfor %}
+
+</body>
+</html>
