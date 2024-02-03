@@ -19,30 +19,61 @@
         <button type="button" id="startScraper">Start Scraper</button>
     </form>
     
+    <button type="button" id="stopScraper" style="display: none;">Stop Scraper</button>
 
     <div id="statusDiv" style="display: none;">
+        <p>Status: <span id="status">Not Started</span></p>
         Scraping has started. Check the results <a href="{% url 'result' %}">Go to Result</a>.
     </div>
 
     <script>
         $(document).ready(function() {
+            // Function to start the scraper
             $("#startScraper").click(function() {
-                // Disable the button to prevent multiple clicks
                 $(this).prop('disabled', true);
 
                 // Make an AJAX request to start the scraper
-                console.log("Button clicked!");
                 $.post("{% url 'start_scraper' %}", $("#scraperForm").serialize(), function(data) {
-                    if (data.status === 'started') {
-                        // Show the status message
-                        console.log("started !");
+                    if (data.status === 'started' || data.status === 'already_running') {
+                        $("#status").text('Scraping has started. Check the results.');
                         $("#statusDiv").show();
+                        $("#stopScraper").show();
                     } else {
-                        // Handle error case
                         alert("Error starting scraper");
                     }
                 });
             });
+
+            // Function to stop the scraper
+            $("#stopScraper").click(function() {
+                $.get("{% url 'stop_task' %}", function(data) {
+                    if (data.status === 'stopped') {
+                        $("#status").text('Scraping has been stopped.');
+                        $("#statusDiv").show();
+                        $("#stopScraper").hide();
+                    } else {
+                        alert("Error stopping scraper");
+                    }
+                });
+            });
+
+            // Function to check the scraper status on page load
+            function checkScraperStatus() {
+                $.get("{% url 'get_scraper_status' %}", function(data) {
+                    if (data.status === 'started') {
+                        $("#status").text('Scraping is in progress. Check the results.');
+                        $("#statusDiv").show();
+                        $("#stopScraper").show();
+                    } else {
+                        $("#status").text('Not Started');
+                        $("#statusDiv").hide();
+                        $("#stopScraper").hide();
+                    }
+                });
+            }
+
+            // Check the scraper status on page load
+            checkScraperStatus();
         });
     </script>
 </body>

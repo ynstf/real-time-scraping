@@ -1,40 +1,49 @@
 from django.shortcuts import render
-import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-import json
-
 from .models import Product
 from django.http import JsonResponse
-from django.urls import reverse
 from background_task import background
 from django.views.decorators.csrf import csrf_exempt
-from datetime import timedelta
 from background_task.models import Task
-#from background_task.models import Task as BackgroundTask
-
-
 import logging
-from django.utils import timezone
+from django.http import JsonResponse
+from background_task.models import Task
 
 logger = logging.getLogger(__name__)
 
-from django.http import JsonResponse
-from background_task.models import Task
+
+def get_scraper_status(request):
+    task_name = 'scraperapp.views.scrape_products'
+    task_exists = Task.objects.filter(task_name=task_name).exists()
+    return JsonResponse({'status': 'started' if task_exists else 'not_started'})
+
 
 def task_status(request):
-    task_status = 'running' if Task.objects.filter(task_name='scraperapp.tasks.scrape_products').exists() else 'stopped'
-    return JsonResponse({'status': task_status})
+    task_name = 'scraperapp.views.scrape_products' 
+    task = Task.objects.filter(task_name=task_name)
+    print(task)
+    if task.exists() :
+        status = 'running'
+    else:
+        status = 'completed'
+    return JsonResponse({'status': status})
 
-def stop_scraper(request):
-    # Code to stop the scraper task goes here (e.g., use Task.objects.filter().delete())
-    return JsonResponse({'status': 'stopped'})
-
+def stop_task(request):
+    task_name = 'scraperapp.views.scrape_products'
+    try:
+        # Filter tasks with the specified task_name
+        tasks = Task.objects.filter(task_name=task_name)
+        # Delete all tasks in the queryset
+        tasks.delete()
+        status = 'stopped'
+    except Task.DoesNotExist:
+        status = 'not_started'
+    return JsonResponse({'status': status})
 
 
 def scrape(url, products_number, repetition_interval):
@@ -43,12 +52,47 @@ def scrape(url, products_number, repetition_interval):
     try :
         logger.error("open drive")
         options = webdriver.FirefoxOptions()
-        #options.add_argument("--headless")  # Run the browser in headless mode
+        options.add_argument("--headless")  # Run the browser in headless mode
         options.add_argument("--window-size=1920,1080")  # Set the window size
         driver = webdriver.Firefox(options=options)
         # Open the webpage
-        #driver.get(url)
+        driver.get(url)
+
         logger.error(f"{url} {products_number} {repetition_interval}")
+        """change the region and currency"""
+        # Find the element by class name
+        element = driver.find_element(By.CLASS_NAME, "ship-to--menuItem--WdBDsYl")
+        # Click on the element
+        element.click()
+        time.sleep(1)
+        # Find the element by class name
+        element = driver.find_element(By.CLASS_NAME, "select--text--1b85oDo")
+        # Click on the element
+        element.click()
+        time.sleep(1)
+        # Wait for the element to be clickable
+        element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'span.country-flag-y2023.SA'))
+        )
+        # Click on the element
+        element.click()
+        time.sleep(1)
+        show_more_button = WebDriverWait(driver, 6).until(
+                        EC.element_to_be_clickable((By.XPATH, '//*[contains(text(), "USD ( الدولار الأمريكي )")]'))
+                    )
+        show_more_button.click()
+        time.sleep(1)
+        show_more_button = WebDriverWait(driver, 6).until(
+                        EC.element_to_be_clickable((By.XPATH, '//*[contains(text(), "SAR ( ريال سعودي )")]'))
+                    )
+        show_more_button.click()
+        time.sleep(1)
+        # Find the element by class name
+        element = driver.find_element(By.CLASS_NAME, "es--saveBtn--w8EuBuy")
+        # Click on the element
+        element.click()
+        time.sleep(3)
+        driver.get(url)
 
         product_info = []
         while len(product_info) < products_number:
@@ -87,7 +131,11 @@ def scrape(url, products_number, repetition_interval):
                 try:
                     image_url = product_div.find('img', class_='multi--img--1IH3lZb').get('src')
                 except:
-                    image_url = None
+                    try:
+                        image_url = product_div.find('img', class_='images--item--3XZa6xf').get('src')
+                    except:
+                        image_url = None
+
                 price_element = product_div.find('div', class_='multi--price-sale--U-S0jtj')
                 price = price_element.text.strip() if price_element else None
                 discount_element = product_div.find('span', class_='multi--discount--3hksz5G')
@@ -155,12 +203,28 @@ def scrape(url, products_number, repetition_interval):
 
 @background
 def scrape_products(url, products_number, repetition_interval):
-    # Your scraping logic goes here
     while True:
+        task_name = 'scraperapp.views.scrape_products'  
+        task = Task.objects.filter(task_name=task_name)
+        print(task)
+        if task.exists() :
+            pass
+        else:
+            break
 
 
         scrape(url, products_number, repetition_interval)
-        time.sleep(repetition_interval*60)
+        #time.sleep(repetition_interval*60)
+        for m in range(repetition_interval):
+            task_name = 'scraperapp.views.scrape_products' 
+            task = Task.objects.filter(task_name=task_name)
+            print(task)
+            if task.exists() :
+                pass
+            else:
+                break
+            time.sleep(60)
+
 
 
 @csrf_exempt
@@ -172,11 +236,6 @@ def start_scraper(request):
         
         try:
             # Call the scrape_products function directly, without scheduling
-            """scrape_products(
-                url=url,
-                products_number=products_number,
-                repetition_interval=repetition_interval,
-            )"""
             print('test')
             scrape_products(url,products_number,repetition_interval)  # Setting repeat to 0 means it will repeat indefinitely
 
@@ -198,7 +257,6 @@ def scraper(request):
 def result(request):
     # Retrieve all products from the database
     products = Product.objects.all()
-
     # Pass the products to the template
     context = {'products': products}
-    return render(request, 'result.html', context)  # Replace 'result.html' with your actual template
+    return render(request, 'result.html', context)
