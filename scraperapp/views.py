@@ -199,7 +199,8 @@ def scrape(url, products_number, repetition_interval):
                         'Units_Sold': units_sold,
                         'Shipping': shipping,
                         'Store': store,
-                        'Product_URL':product_url
+                        'Product_URL':product_url,
+                        'scraped_from':url
                     })
                     # Save the scraped data to the database
                     product = Product(
@@ -211,7 +212,8 @@ def scrape(url, products_number, repetition_interval):
                         units_sold=units_sold,
                         shipping=shipping,
                         store=store,
-                        product_url=product_url
+                        product_url=product_url,
+                        scraped_from=url
                     )
                     product.save()
             print(len(product_info))
@@ -293,9 +295,10 @@ def scraper(request):
     return render(request, 'scraper.html',context=context)
 
 
-def result(request):
+def result(request,url):
     # Retrieve all products from the database
-    products = Product.objects.all()
+    # products = Product.objects.all()
+    products = Product.objects.filter(scraped_from= url)
     # Pass the products to the template
     context = {'products': products}
     return render(request, 'result.html', context)

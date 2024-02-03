@@ -28,7 +28,7 @@
 
             <div class="statusDiv" style="display: none;">
                 <p>Status: <span class="status">Not Started</span></p>
-                Check the results <a class="resultLink" href="{% url 'result' %}">Results</a>.
+                Check the results <a class="resultLink" href="{% url 'result' url=task.url %}">Results</a>.
             </div>
             <br><br>
         {% endfor %}
@@ -96,7 +96,12 @@
                 // Create "statusDiv"
                 newForm.append('<div class="statusDiv" style="display: none;">' +
                     '<p>Status: <span class="status">Not Started</span></p>' +
-                    `Check the results <a class="resultLink" href="{% url 'result' %}">Results</a>.` +
+                    `{% if task.url %}
+                        Check the results <a class="resultLink" href="{% url 'result' url=task.url %}">Results</a>.
+                    {% else %}
+                        Refresh the page to see URL
+                    {% endif %}`
+                    +
                     '</div>');
 
                 // Append the new form to the body

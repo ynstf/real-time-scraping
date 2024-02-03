@@ -9,6 +9,6 @@ urlpatterns = [
     path('scraper/', scraper, name='scraper'),
     path('get_scraper_status/', get_scraper_status, name='get_scraper_status'),
     path('get_task_status/<str:url>/', get_task_status, name='get_task_status'),
-    path('result/', result, name='result'),
+    path('result/<str:url>/', result, name='result'),
     # ... other URL patterns ...
 ]
