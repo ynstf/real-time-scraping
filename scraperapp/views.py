@@ -213,7 +213,7 @@ def scrape(url, products_number, repetition_interval):
                         shipping=shipping,
                         store=store,
                         product_url=product_url,
-                        scraped_from=url
+                        scraped_from=url.replace('/', 'y')
                     )
                     product.save()
             print(len(product_info))
