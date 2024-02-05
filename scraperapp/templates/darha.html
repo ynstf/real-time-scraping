@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scraped Results</title>
+</head>
+<body>
+    <h2>Scraped Product Information</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                
+                <th>Title</th>
+                <th>Image URL</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Original Price</th>
+                <th>Status</th>
+                <th>Brand</th>
+                <th>Product URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+        
+                    <td>{{ product.Title }}</td>
+                    <td>{{ product.Image_URL }}</td>
+                    <td>{{ product.Price }}</td>
+                    <td>{{ product.Discount }}</td>
+                    <td>{{ product.original_price }}</td>
+
+                    <td>{{ product.Status }}</td>
+
+                    <td>{{ product.Brand }}</td>
+
+                    <td>{{ product.Product_URL }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

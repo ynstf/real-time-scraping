@@ -9,6 +9,11 @@
     Django migrations
         python manage.py makemigrations
         python manage.py migrate
+    
+    Running server:
+        python manage.py process_tasks
+        python manage.py runserver
+    (two command in two terminal in same folder)
 
 
 # Dependencies

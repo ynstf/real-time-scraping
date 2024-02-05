@@ -14,6 +14,10 @@ import logging
 from django.http import JsonResponse
 from background_task.models import Task
 from django.forms.models import model_to_dict
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
+from webdriver_manager.firefox import GeckoDriverManager
+
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +28,6 @@ def get_scraper_status(request):
     return JsonResponse({'status': 'started' if task_exists else 'not_started'})
 
 
-
 def get_task_status(request, url):
     try:
         task = AliexpressAction.objects.get(url=url)  # Replace YourTaskModel with your actual model
@@ -32,6 +35,7 @@ def get_task_status(request, url):
         return JsonResponse({'status': status})
     except AliexpressAction.DoesNotExist:
         return JsonResponse({'status': 'not_found'})
+
 
 def task_status(request):
     task_name = 'scraperapp.views.scrape_products' 
@@ -77,10 +81,20 @@ def scrape(url, products_number, repetition_interval):
     n=1
     try :
         logger.error("open drive")
-        options = webdriver.FirefoxOptions()
+
+
+        """options = webdriver.FirefoxOptions()
         options.add_argument("--headless")  # Run the browser in headless mode
         options.add_argument("--window-size=1920,1080")  # Set the window size
-        driver = webdriver.Firefox(options=options)
+        driver = webdriver.Firefox(options=options)"""
+
+        firefox_options = webdriver.FirefoxOptions()
+        firefox_options.add_argument('--no-sandbox')
+        firefox_options.add_argument('--headless')
+        firefox_options.add_argument('--disable-dev-shm-usage')
+
+        driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
+
         # Open the webpage
         driver.get(url)
 
@@ -304,10 +318,21 @@ def result(request,url):
     return render(request, 'result.html', context)
 
 
+
+def darha(request):
+
+    products = []
+
+    context = {'products': products}
+    return render(request,"darha.html",context)
+
+
 def dashboard(request):
     shoops = [
         {"name":"Alieexpress","url":"/aliexpress/","image":"https://ae01.alicdn.com/kf/Sa0202ec8a96a4085962acfc27e9ffd04F/1080x1080.jpg"},
         ]
     context = {"shoops":shoops}
     return render(request, 'dashboard.html', context)
+
+
 
