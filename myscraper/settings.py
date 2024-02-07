@@ -134,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #MAX_ATTEMPTS = 25
 #MAX_RUN_TIME = 3600
 BACKGROUND_TASK_RUN_ASYNC = True
-BACKGROUND_TASK_ASYNC_THREADS = 4  # You can adjust this based on your server's capabilities
+BACKGROUND_TASK_ASYNC_THREADS = 10  # You can adjust this based on your server's capabilities
 BACKGROUND_TASK_PRIORITY_ORDERING = "DESC"  # or "ASC" based on your preference
 
 
