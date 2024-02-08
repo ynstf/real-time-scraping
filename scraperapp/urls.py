@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status, get_task_status,dashboard,darha  # Import the 'result' view
+from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status, get_task_status,dashboard,deraah  # Import the 'result' view
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('deraah/', darha, name='darha'),
+    path('deraah/', deraah, name='deraah'),
     path('', dashboard, name='dashboard'),
     path('task_status/', task_status, name='task_status'),
     path('stop_task/', stop_task, name='stop_task'),

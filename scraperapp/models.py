@@ -21,7 +21,10 @@ class Product(models.Model):
     store = models.CharField(max_length=255, blank=True, null=True)
     product_url = models.URLField(blank=True, null=True)
 
+    catygorie = models.CharField(max_length=50, blank=True, null=True)
+
     scraped_from = models.URLField(blank=True, null=True)
+
 
     def __str__(self):
         return self.title

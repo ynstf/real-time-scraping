@@ -22,6 +22,9 @@
                 <label for="repetition_interval">Repetition Interval (minutes):</label>
                 <input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>
 
+                <label for="repetition_interval">Category :</label>
+                <input type="text" name="caty" required><br>
+
                 <button type="button" class="startScraper">Start Scraper</button>
             </form>
 
@@ -91,8 +94,8 @@
                 newForm.append('<label for="url">Enter aliexpress Products URL:</label><input type="text" name="url" required><br>');
                 newForm.append('<label for="products_number">Enter number of products:</label><input type="number" name="products_number" value="10" required><br>');
                 newForm.append('<label for="repetition_interval">Repetition Interval (minutes):</label><input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>');
+                newForm.append('<label for="repetition_interval">Category :</label><input type="text" name="caty" required><br>');
                 newForm.append('<button type="button" class="startScraper">Start Scraper</button>');
-                
                 // Create "Stop Scraper" button
                 var stopButton = $('<button type="button" class="stopScraper" style="display: none;">Stop Scraper</button>');
                 stopButton.data('url', '');  // Set the URL dynamically
