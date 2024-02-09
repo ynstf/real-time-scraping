@@ -17,10 +17,18 @@ logger = logging.getLogger(__name__)
 def deraah_scrape(url, products_number, repetition_interval, caty):
     
     try:
-        options = webdriver.FirefoxOptions()
-        options.add_argument("--headless")  # Run the browser in headless mode
-        #options.add_argument("--window-size=1920,1080")  # Set the window size
-        driver = webdriver.Firefox(options=options)
+        # Specify the path to the GeckoDriver executable
+        geckodriver_path = '/usr/local/bin/geckodriver'
+
+        # Configure Firefox options
+        firefox_options = webdriver.FirefoxOptions()
+        firefox_options.add_argument('--no-sandbox')
+        firefox_options.add_argument('--headless')
+        firefox_options.add_argument('--disable-dev-shm-usage')
+
+        # Create the Firefox WebDriver instance
+        driver = webdriver.Firefox(executable_path=geckodriver_path, options=firefox_options)
+
     except:
         firefox_options = webdriver.FirefoxOptions()
         firefox_options.add_argument('--no-sandbox')

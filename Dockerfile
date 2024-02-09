@@ -14,10 +14,13 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN pip install pip --upgrade && \
     pip install -r requirements.txt && \
-    pip install webdriver_manager==3.4.2 
+    pip install webdriver_manager==3.4.2
+
 # Download and set up GeckoDriver
 ENV GECKODRIVER_VERSION 0.30.0
-#ENV GECKODRIVER_VERSION 0.34.0
+# Set the path to store GeckoDriver
+ENV GECKODRIVER_PATH /usr/local/bin/geckodriver
+
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz && \
     tar -xf geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz -C /usr/local/bin/ && \
     rm geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
@@ -30,4 +33,3 @@ RUN chmod +x /app/entrypoint.sh
 RUN python /app/manage.py collectstatic
 
 CMD ["/app/entrypoint.sh"]
-
