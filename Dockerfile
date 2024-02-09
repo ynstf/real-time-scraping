@@ -4,6 +4,7 @@ FROM python:3.8.1
 # Set the working directory to /app
 WORKDIR /app
 
+
 # Install Firefox and necessary dependencies
 RUN apt-get update && \
     apt-get install -y firefox-esr && \

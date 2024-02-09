@@ -20,18 +20,12 @@ def scrape(url, products_number, repetition_interval, caty):
     try :
         logger.error("open drive")
 
-        # Specify the path to the GeckoDriver executable
-        geckodriver_path = '/usr/local/bin/geckodriver'
 
-        # Configure Firefox options
         firefox_options = webdriver.FirefoxOptions()
         firefox_options.add_argument('--no-sandbox')
         firefox_options.add_argument('--headless')
         firefox_options.add_argument('--disable-dev-shm-usage')
-
-        # Create the Firefox WebDriver instance
-        driver = webdriver.Firefox(options=firefox_options)
-
+        driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
 
         # Open the webpage
         driver.get(url)
