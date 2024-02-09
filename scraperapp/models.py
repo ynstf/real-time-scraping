@@ -33,8 +33,11 @@ class Product(models.Model):
     product_url = models.URLField(blank=True, null=True)
 
     catygorie = models.CharField(max_length=50, blank=True, null=True)
-
     scraped_from = models.URLField(blank=True, null=True)
+    # Add the DateTimeField for the time of adding the product
+    added_at = models.DateTimeField(auto_now_add=True)
+    added_from = models.CharField(max_length=50, blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):

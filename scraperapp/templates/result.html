@@ -24,11 +24,13 @@
                     <th>Price</th>
                     <th>Discount</th>
                     <th>Original Price</th>
-                    <th>Units Sold</th>
-                    <th>Shipping</th>
-                    <th>Store</th>
+                
                     <th>Category</th>
                     <th>Product URL</th>
+                    
+                    <th>Duration</th>
+
+
                 </tr>
             </thead>
             <tbody>
@@ -39,11 +41,12 @@
                         <td>{{ product.price }}</td>
                         <td>{{ product.discount }}</td>
                         <td>{{ product.original_price }}</td>
-                        <td>{{ product.units_sold }}</td>
-                        <td>{{ product.shipping }}</td>
-                        <td>{{ product.store }}</td>
+
                         <td>{{ product.catygorie }}</td>
                         <td><a href="{{ product.product_url }}" target="_blank">Visit Product</a></td>
+
+                        
+                        <td>{{ product.duration }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

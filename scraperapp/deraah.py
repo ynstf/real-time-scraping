@@ -16,18 +16,17 @@ logger = logging.getLogger(__name__)
 
 def deraah_scrape(url, products_number, repetition_interval, caty):
     
-    """options = webdriver.FirefoxOptions()
-    options.add_argument("--headless")  # Run the browser in headless mode
-    options.add_argument("--window-size=1920,1080")  # Set the window size
-    driver = webdriver.Firefox(options=options)"""
-
-
-    firefox_options = webdriver.FirefoxOptions()
-    firefox_options.add_argument('--no-sandbox')
-    firefox_options.add_argument('--headless')
-    firefox_options.add_argument('--disable-dev-shm-usage')
-
-    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
+    try:
+        options = webdriver.FirefoxOptions()
+        options.add_argument("--headless")  # Run the browser in headless mode
+        #options.add_argument("--window-size=1920,1080")  # Set the window size
+        driver = webdriver.Firefox(options=options)
+    except:
+        firefox_options = webdriver.FirefoxOptions()
+        firefox_options.add_argument('--no-sandbox')
+        firefox_options.add_argument('--headless')
+        firefox_options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
 
     # Open the webpage
     driver.get(url)
@@ -143,7 +142,9 @@ def deraah_scrape(url, products_number, repetition_interval, caty):
                 original_price=old_price.text.split('Price reduced from')[1].split('to')[0].strip(),
                 product_url=product_url,
                 catygorie=caty,
-                scraped_from=url.replace('/', 'y')
+                scraped_from=url.replace('/', 'y'),
+                added_from="deraah",
+                duration=repetition_interval
             )
             product.save()
     

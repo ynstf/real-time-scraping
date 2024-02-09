@@ -27,7 +27,7 @@ def dashboard(request):
 
 
 ###################  result page  ###################
-def result(request,url):
+"""def result(request,url):
     # Retrieve all products from the database
     # products = Product.objects.all()
     products = Product.objects.filter(scraped_from= url)
@@ -35,7 +35,30 @@ def result(request,url):
     context = {'products': products}
     return render(request, 'result.html', context)
 
+"""
+from django.utils import timezone
+def result(request, url):
+    # Retrieve all products from the database
+    products = Product.objects.filter(scraped_from=url)
 
+    # Calculate the time difference for each product
+    current_time = timezone.now()
+
+    valid_products = []
+    for product in products:
+        time_difference = current_time - product.added_at
+        print(time_difference)
+        product.duration = timezone.timedelta(minutes=product.duration) - time_difference
+
+        # Only include products with positive duration
+        if product.duration.total_seconds() > 0:
+            valid_products.append(product)
+
+        
+
+    # Pass the products to the template
+    context = {'products': valid_products}
+    return render(request, 'result.html', context)
 
 ###################  alixpress  ###################
 def get_scraper_status(request):
