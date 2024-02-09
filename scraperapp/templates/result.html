@@ -1,41 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Scraped Results</title>
+    <!-- Add Bootstrap CSS link -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Add custom styling for better spacing and alignment */
+        body {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Scraped Product Information</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Image URL</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>Original Price</th>
-                <th>Units Sold</th>
-                <th>Shipping</th>
-                <th>Store</th>
-                <th>Category</th>
-                <th>Product URL</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
+    <div class="container">
+        <h2 class="mt-4 mb-4">Scraped Product Information</h2>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ product.title }}</td>
-                    <td>{{ product.image_url }}</td>
-                    <td>{{ product.price }}</td>
-                    <td>{{ product.discount }}</td>
-                    <td>{{ product.original_price }}</td>
-                    <td>{{ product.units_sold }}</td>
-                    <td>{{ product.shipping }}</td>
-                    <td>{{ product.store }}</td>
-                    <td>{{ product.catygorie }}</td>
-                    <td>{{ product.product_url }}</td>
+                    <th>Title</th>
+                    <th>Image URL</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Original Price</th>
+                    <th>Units Sold</th>
+                    <th>Shipping</th>
+                    <th>Store</th>
+                    <th>Category</th>
+                    <th>Product URL</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.title }}</td>
+                        <td><img src="{{ product.image_url }}" alt="{{ product.title }}" width="50" height="50"></td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.discount }}</td>
+                        <td>{{ product.original_price }}</td>
+                        <td>{{ product.units_sold }}</td>
+                        <td>{{ product.shipping }}</td>
+                        <td>{{ product.store }}</td>
+                        <td>{{ product.catygorie }}</td>
+                        <td><a href="{{ product.product_url }}" target="_blank">Visit Product</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

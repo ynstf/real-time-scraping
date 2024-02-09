@@ -6,6 +6,7 @@ class DeraahAction(models.Model):
     url = models.CharField(max_length=400)
     products_number = models.IntegerField()
     repetition_interval = models.IntegerField()
+    Category = models.CharField(max_length=50, blank=True, null=True)
     status = models.CharField(max_length=20, default='Not Started')
     def __str__(self):
         return self.url
@@ -14,6 +15,7 @@ class AliexpressAction(models.Model):
     url = models.CharField(max_length=400)
     products_number = models.IntegerField()
     repetition_interval = models.IntegerField()
+    Category = models.CharField(max_length=50, blank=True, null=True)
     status = models.CharField(max_length=20, default='Not Started')
     def __str__(self):
         return self.url

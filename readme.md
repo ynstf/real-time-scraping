@@ -55,3 +55,32 @@ Make sure to place the downloaded executable in a directory included in your sys
 more explcations, visite :
 https://linuxhint.com/using_selenium_firefox_driver/
 https://www.bacancytechnology.com/qanda/qa-automation/configuring-geckodriver-in-linux-to-use-with-selenium
+
+
+
+العناصر الضرورية للمنتج هي: 
+اسم المنتج
+وصف المنتج 
+الفئة
+السعر
+الخصم 
+السعر بعد الخصم 
+رابط المنتج 
+الصور
+الوقت الذي يتم ادخاله هنا يظهر في جدول المنتجات
+
+
+
+درعة* 	https://www.deraahstore.com/
+نايس ون 	niceonesa.com
+اكسترا	https://www.extra.com/
+ردسي	https://redsea.com/
+جرير	www.jarir.com
+النهدي	https://www.nahdionline.com/
+الدواء	https://www.al-dawaa.com/
+بندة	https://panda.com.sa/
+الدانوب	https://danube.sa/
+كارفور	www.carrefourksa.com
+لولو	https://www.luluhypermarket.com/
+العثيم	https://www.othaimmarkets.com/
+نون	https://www.noon.com/ 

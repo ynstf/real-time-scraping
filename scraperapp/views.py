@@ -128,6 +128,7 @@ def start_scraper(request):
                 url=url,
                 products_number=products_number,
                 repetition_interval=repetition_interval,
+                Category=caty,
                 status="started"
                 )
 
@@ -182,6 +183,7 @@ def deraah_start_scraper(request):
                 url=url,
                 products_number=products_number,
                 repetition_interval=repetition_interval,
+                Category=caty,
                 status="started"
                 )
 
@@ -194,6 +196,7 @@ def deraah_start_scraper(request):
 
     return JsonResponse({'status': 'error'})
 
+
 @background
 def deraah_scrape_products(url, products_number, repetition_interval,caty):
     while True:
@@ -205,10 +208,12 @@ def deraah_scrape_products(url, products_number, repetition_interval,caty):
         else:
             break
 
-
+        print("9able")
         deraah_scrape(url, products_number, repetition_interval,caty)
-        #time.sleep(repetition_interval*60)
+        print("ba3d")
         for m in range(repetition_interval):
+            print("im sleep")
+            print(m)
             task_name = 'scraperapp.views.deraah_scrape_products' 
             task = Task.objects.filter(task_name=task_name)
             print(task)
@@ -217,6 +222,7 @@ def deraah_scrape_products(url, products_number, repetition_interval,caty):
             else:
                 break
             time.sleep(60)
+
 
 def deraah_get_scraper_status(request):
     task_name = 'scraperapp.views.deraah_scrape_products'
@@ -259,3 +265,10 @@ def deraah_stop_task(request):
         status = 'not_started'
     return JsonResponse({'status': status})
 
+def deraah_get_task_status(request, url):
+    try:
+        task = DeraahAction.objects.get(url=url)  # Replace YourTaskModel with your actual model
+        status = task.status  # Assuming your task model has a 'status' field
+        return JsonResponse({'status': status})
+    except DeraahAction.DoesNotExist:
+        return JsonResponse({'status': 'not_found'})

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status, get_task_status,dashboard
-from .views import deraah_scraper,deraah_start_scraper,deraah_get_scraper_status, deraah_task_status,deraah_stop_task
+from .views import deraah_scraper,deraah_start_scraper,deraah_get_scraper_status, deraah_task_status,deraah_stop_task,deraah_get_task_status
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,6 +24,10 @@ urlpatterns = [
     path('deraah_get_scraper_status/', deraah_get_scraper_status, name='deraah_get_scraper_status'),
     path('deraah_task_status/', deraah_task_status, name='deraah_task_status'),
     path('deraah_stop_task/', deraah_stop_task, name='deraah_stop_task'),
+    path('deraah_get_task_status/<str:url>/', deraah_get_task_status, name='deraah_get_task_status'),
+
+
+    
     
     # ... other URL patterns ...
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
