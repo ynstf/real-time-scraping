@@ -14,10 +14,10 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN pip install pip --upgrade && \
     pip install -r requirements.txt && \
-    pip install webdriver_manager==3.4.2
+    pip install webdriver_manager==3.5.1
 
 # Download and set up GeckoDriver
-ENV GECKODRIVER_VERSION 0.30.0
+ENV GECKODRIVER_VERSION 0.34.0
 # Set the path to store GeckoDriver
 ENV GECKODRIVER_PATH /usr/local/bin/geckodriver
 
