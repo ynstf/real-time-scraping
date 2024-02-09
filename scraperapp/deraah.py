@@ -11,7 +11,6 @@ import re
 
 logger = logging.getLogger(__name__)
 
-
 def deraah_scrape(url, products_number, repetition_interval, caty):
     print("hii")
     
