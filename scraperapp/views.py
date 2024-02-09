@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 def dashboard(request):
     shoops = [
         {"name":"Alieexpress","url":"/aliexpress/","image":"https://ae01.alicdn.com/kf/Sa0202ec8a96a4085962acfc27e9ffd04F/1080x1080.jpg"},
+        {"name":"Deraah","url":"/deraah/","image":"https://www.deraahstore.com/on/demandware.static/Sites-deraah_SA-Site/-/default/dwed8cc41d/images/deraah-logo.png"},
         ]
     context = {"shoops":shoops}
     return render(request, 'dashboard.html', context)
@@ -151,12 +152,110 @@ def scraper(request):
 
 
 
-###################  darha  ###################
+###################  deraah  ###################
+from .models import DeraahAction
+from .deraah import deraah_scrape
 
-def deraah(request):
+def deraah_scraper(request):
 
-    products = []
-
-    context = {'products': products}
+    aliexpress_actions = DeraahAction.objects.filter(status="started")
+    #print(aliexpress_actions)
+    context={
+        'tasks_run':aliexpress_actions
+    }
     return render(request,"deraah.html",context)
+
+@csrf_exempt
+def deraah_start_scraper(request):
+    if request.method == 'POST':
+        url = request.POST.get('url')
+        products_number = int(request.POST.get('products_number', 10))
+        repetition_interval = int(request.POST.get('repetition_interval', 5))  # in minutes
+        caty = request.POST.get('caty')
+
+        try:
+            # Call the scrape_products function directly, without scheduling
+            print('test')
+            deraah_scrape_products(url,products_number,repetition_interval,caty)  # Setting repeat to 0 means it will repeat indefinitely
+            # Save the action to the database
+            deraah_action = DeraahAction.objects.create(
+                url=url,
+                products_number=products_number,
+                repetition_interval=repetition_interval,
+                status="started"
+                )
+
+        except Exception as e:
+            print(f"Error in scrape_products: {e}")
+            raise
+
+        # Return a JSON response to indicate that the scraping has started
+        return JsonResponse({'status': 'started'})
+
+    return JsonResponse({'status': 'error'})
+
+@background
+def deraah_scrape_products(url, products_number, repetition_interval,caty):
+    while True:
+        task_name = 'scraperapp.views.deraah_scrape_products'  
+        task = Task.objects.filter(task_name=task_name)
+        print(task)
+        if task.exists() :
+            pass
+        else:
+            break
+
+
+        deraah_scrape(url, products_number, repetition_interval,caty)
+        #time.sleep(repetition_interval*60)
+        for m in range(repetition_interval):
+            task_name = 'scraperapp.views.deraah_scrape_products' 
+            task = Task.objects.filter(task_name=task_name)
+            print(task)
+            if task.exists() :
+                pass
+            else:
+                break
+            time.sleep(60)
+
+def deraah_get_scraper_status(request):
+    task_name = 'scraperapp.views.deraah_scrape_products'
+    task_exists = Task.objects.filter(task_name=task_name).exists()
+    return JsonResponse({'status': 'started' if task_exists else 'not_started'})
+
+def deraah_task_status(request):
+    task_name = 'scraperapp.views.deraah_scrape_products' 
+    task = Task.objects.filter(task_name=task_name)
+    print(task)
+    if task.exists() :
+        status = 'running'
+    else:
+        status = 'completed'
+    return JsonResponse({'status': status})
+
+def deraah_stop_task(request):
+    url = request.GET.get('url', None)
+    print(url)
+    task_name = 'scraperapp.views.deraah_scrape_products'
+    try:
+
+        # Filter tasks with the specified task_name
+        tasks = Task.objects.filter(task_name=task_name)
+        # Delete all tasks in the queryset
+        #tasks.delete()
+
+        for task in tasks:
+            
+            task_params_str = model_to_dict(task)["task_params"]
+            task_params_list = json.loads(task_params_str)
+            print(task_params_list)
+            if task_params_list[0][0] == url:
+                task.delete()
+        
+        urls = DeraahAction.objects.filter(url=url)
+        urls.delete()
+        status = 'stopped'
+    except Task.DoesNotExist:
+        status = 'not_started'
+    return JsonResponse({'status': status})
 
