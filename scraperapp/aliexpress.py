@@ -30,7 +30,7 @@ def scrape(url, products_number, repetition_interval, caty):
         firefox_options.add_argument('--disable-dev-shm-usage')
 
         # Create the Firefox WebDriver instance
-        driver = webdriver.Firefox(executable_path=geckodriver_path, options=firefox_options)
+        driver = webdriver.Firefox(options=firefox_options)
 
 
         # Open the webpage
