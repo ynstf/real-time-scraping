@@ -28,6 +28,7 @@ def scrape(url, products_number, repetition_interval, caty):
         firefox_options.add_argument('--headless')
         firefox_options.add_argument('--disable-dev-shm-usage')
         driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
+        time.sleep(3)
 
         # Open the webpage
         driver.get(url)

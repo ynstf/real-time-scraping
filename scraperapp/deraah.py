@@ -8,6 +8,7 @@ from .models import Product,AliexpressAction
 from django.http import JsonResponse
 from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 import logging
 import re
 from selenium.webdriver.chrome.options import Options
@@ -18,11 +19,20 @@ logger = logging.getLogger(__name__)
 def deraah_scrape(url, products_number, repetition_interval, caty):
     
     
-    firefox_options = webdriver.FirefoxOptions()
+    """firefox_options = webdriver.FirefoxOptions()
     firefox_options.add_argument('--no-sandbox')
     firefox_options.add_argument('--headless')
     firefox_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
+    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)"""
+
+    chrome_option = webdriver.ChromeOptions()
+    chrome_option.add_argument('--headless')
+    chrome_option.add_argument('--no-sandbox')
+    chrome_option.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_option)
+    time.sleep(3)
+
+
 
 
 
