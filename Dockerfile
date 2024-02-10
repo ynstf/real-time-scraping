@@ -14,8 +14,8 @@ RUN apt-get update && \
 # Install required Python packages
 COPY requirements.txt requirements.txt
 RUN pip install pip --upgrade && \
-    pip install -r requirements.txt && \
-    pip install webdriver_manager==3.5.1
+    pip install -r requirements.txt
+
 
 # Download and set up GeckoDriver
 ENV GECKODRIVER_VERSION 0.34.0

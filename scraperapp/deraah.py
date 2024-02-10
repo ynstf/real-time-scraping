@@ -18,18 +18,11 @@ logger = logging.getLogger(__name__)
 def deraah_scrape(url, products_number, repetition_interval, caty):
     
     
-    """firefox_options = webdriver.FirefoxOptions()
+    firefox_options = webdriver.FirefoxOptions()
     firefox_options.add_argument('--no-sandbox')
     firefox_options.add_argument('--headless')
     firefox_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)"""
-
-    # selenium 4
-    from selenium import webdriver
-    from selenium.webdriver.edge.service import Service as EdgeService
-    from webdriver_manager.microsoft import EdgeChromiumDriverManager
-
-    driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()))
+    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
 
 
 
