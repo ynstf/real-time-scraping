@@ -2,6 +2,15 @@
 from django.db import models
 
 
+class NiceonesaAction(models.Model):
+    url = models.CharField(max_length=400)
+    products_number = models.IntegerField()
+    repetition_interval = models.IntegerField()
+    Category = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, default='Not Started')
+    def __str__(self):
+        return self.url
+
 class DeraahAction(models.Model):
     url = models.CharField(max_length=400)
     products_number = models.IntegerField()
@@ -38,6 +47,8 @@ class Product(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
     added_from = models.CharField(max_length=50, blank=True, null=True)
     duration = models.IntegerField(blank=True, null=True)
+
+    description = models.CharField(max_length=300, blank=True, null=True)
 
 
     def __str__(self):

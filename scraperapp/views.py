@@ -11,6 +11,8 @@ from background_task.models import Task
 from django.forms.models import model_to_dict
 import json
 from .aliexpress import scrape
+from django.utils import timezone
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,7 @@ def dashboard(request):
     shoops = [
         {"name":"Alieexpress","url":"/aliexpress/","image":"https://ae01.alicdn.com/kf/Sa0202ec8a96a4085962acfc27e9ffd04F/1080x1080.jpg"},
         {"name":"Deraah","url":"/deraah/","image":"https://www.deraahstore.com/on/demandware.static/Sites-deraah_SA-Site/-/default/dwed8cc41d/images/deraah-logo.png"},
+        {"name":"Niceonesa","url":"/niceonesa/","image":"https://cdn.niceonesa.com/web/assets/img/a886eac.svg"},
         ]
     context = {"shoops":shoops}
     return render(request, 'dashboard.html', context)
@@ -36,7 +39,7 @@ def dashboard(request):
     return render(request, 'result.html', context)
 
 """
-from django.utils import timezone
+
 def result(request, url):
     # Retrieve all products from the database
     products = Product.objects.filter(scraped_from=url)
@@ -295,3 +298,124 @@ def deraah_get_task_status(request, url):
         return JsonResponse({'status': status})
     except DeraahAction.DoesNotExist:
         return JsonResponse({'status': 'not_found'})
+
+
+
+###################  niceonesa  ###################
+from .models import NiceonesaAction
+from .niceonesa import niceonesa_scrape
+
+
+def niceonesa_get_scraper_status(request):
+    task_name = 'scraperapp.views.niceonesa_scrape_products'
+    task_exists = Task.objects.filter(task_name=task_name).exists()
+    return JsonResponse({'status': 'started' if task_exists else 'not_started'})
+
+def niceonesa_get_task_status(request, url):
+    try:
+        task = NiceonesaAction.objects.get(url=url)  # Replace YourTaskModel with your actual model
+        status = task.status  # Assuming your task model has a 'status' field
+        return JsonResponse({'status': status})
+    except NiceonesaAction.DoesNotExist:
+        return JsonResponse({'status': 'not_found'})
+
+def niceonesa_task_status(request):
+    task_name = 'scraperapp.views.niceonesa_scrape_products' 
+    task = Task.objects.filter(task_name=task_name)
+    print(task)
+    if task.exists() :
+        status = 'running'
+    else:
+        status = 'completed'
+    return JsonResponse({'status': status})
+
+def niceonesa_stop_task(request):
+    url = request.GET.get('url', None)
+    print(url)
+    task_name = 'scraperapp.views.niceonesa_scrape_products'
+    try:
+
+        # Filter tasks with the specified task_name
+        tasks = Task.objects.filter(task_name=task_name)
+        # Delete all tasks in the queryset
+        #tasks.delete()
+
+        for task in tasks:
+            
+            task_params_str = model_to_dict(task)["task_params"]
+            task_params_list = json.loads(task_params_str)
+            print(task_params_list)
+            if task_params_list[0][0] == url:
+                task.delete()
+        
+        urls = NiceonesaAction.objects.filter(url=url)
+        urls.delete()
+        status = 'stopped'
+    except Task.DoesNotExist:
+        status = 'not_started'
+    return JsonResponse({'status': status})
+
+@background
+def niceonesa_scrape_products(url, products_number, repetition_interval,caty):
+    while True:
+        task_name = 'scraperapp.views.niceonesa_scrape_products'  
+        task = Task.objects.filter(task_name=task_name)
+        print(task)
+        if task.exists() :
+            pass
+        else:
+            break
+
+
+        niceonesa_scrape(url, products_number, repetition_interval,caty)
+        #time.sleep(repetition_interval*60)
+        for m in range(repetition_interval):
+            task_name = 'scraperapp.views.niceonesa_scrape_products' 
+            task = Task.objects.filter(task_name=task_name)
+            print(task)
+            if task.exists() :
+                pass
+            else:
+                break
+            time.sleep(60)
+
+@csrf_exempt
+def niceonesa_start_scraper(request):
+    if request.method == 'POST':
+        url = request.POST.get('url')
+        products_number = int(request.POST.get('products_number', 10))
+        repetition_interval = int(request.POST.get('repetition_interval', 5))  # in minutes
+        caty = request.POST.get('caty')
+
+        try:
+            # Call the scrape_products function directly, without scheduling
+            print('test')
+            niceonesa_scrape_products(url,products_number,repetition_interval,caty)  # Setting repeat to 0 means it will repeat indefinitely
+            # Save the action to the database
+            niceonesa_action = NiceonesaAction.objects.create(
+                url=url,
+                products_number=products_number,
+                repetition_interval=repetition_interval,
+                Category=caty,
+                status="started"
+                )
+
+        except Exception as e:
+            print(f"Error in scrape_products: {e}")
+            raise
+
+        # Return a JSON response to indicate that the scraping has started
+        return JsonResponse({'status': 'started'})
+
+    return JsonResponse({'status': 'error'})
+
+def niceonesa_scraper(request):
+
+    niceonesa_actions = NiceonesaAction.objects.filter(status="started")
+    #print(aliexpress_actions)
+
+    context={
+        'tasks_run':niceonesa_actions
+    }
+    return render(request, 'niceonesa.html',context=context)
+

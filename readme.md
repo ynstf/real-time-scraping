@@ -72,7 +72,7 @@ https://www.bacancytechnology.com/qanda/qa-automation/configuring-geckodriver-in
 
 
 درعة* 	https://www.deraahstore.com/
-نايس ون 	niceonesa.com
+نايس ون* 	niceonesa.com
 اكسترا	https://www.extra.com/
 ردسي	https://redsea.com/
 جرير	www.jarir.com

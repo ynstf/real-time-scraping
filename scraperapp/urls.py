@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import start_scraper, scraper, result, task_status,stop_task, get_scraper_status, get_task_status,dashboard
+from .views import niceonesa_start_scraper, niceonesa_scraper, niceonesa_task_status, niceonesa_stop_task, niceonesa_get_scraper_status, niceonesa_get_task_status
 from .views import deraah_scraper,deraah_start_scraper,deraah_get_scraper_status, deraah_task_status,deraah_stop_task,deraah_get_task_status
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,7 +28,16 @@ urlpatterns = [
     path('deraah_get_task_status/<str:url>/', deraah_get_task_status, name='deraah_get_task_status'),
 
 
-    
+    # niceonesa pages
+    path('niceonesa/', niceonesa_scraper, name='niceonesa_scraper'),
+    path('niceonesa_start_scraper/', niceonesa_start_scraper, name='niceonesa_start_scraper'),
+    path('niceonesa_get_scraper_status/', niceonesa_get_scraper_status, name='niceonesa_get_scraper_status'),
+    path('niceonesa_task_status/', niceonesa_task_status, name='niceonesa_task_status'),
+    path('niceonesa_stop_task/', niceonesa_stop_task, name='niceonesa_stop_task'),
+    path('niceonesa_get_task_status/<str:url>/', niceonesa_get_task_status, name='niceonesa_get_task_status'),
+
+
+
     
     # ... other URL patterns ...
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

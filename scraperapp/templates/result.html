@@ -27,6 +27,8 @@
                 
                     <th>Category</th>
                     <th>Product URL</th>
+
+                    <th>Description</th>
                     
                     <th>Duration</th>
 
@@ -46,6 +48,7 @@
                         <td><a href="{{ product.product_url }}" target="_blank">Visit Product</a></td>
 
                         
+                        <td>{{ product.description|slice:":30" }} ...</td>
                         <td>{{ product.duration }}</td>
                     </tr>
                 {% endfor %}
