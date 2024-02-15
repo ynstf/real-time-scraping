@@ -39,7 +39,9 @@
                 {% for product in products %}
                     <tr>
                         <td>{{ product.title }}</td>
-                        <td><img src="{{ product.image_url }}" alt="{{ product.title }}" width="50" height="50"></td>
+
+                        <td><img src="{{ product.first_img }}" alt="{{ product.title }}" width="50" height="50"></td>
+
                         <td>{{ product.price }}</td>
                         <td>{{ product.discount }}</td>
                         <td>{{ product.original_price }}</td>

@@ -23,9 +23,9 @@ def niceonesa_scrape(url, products_number, repetition_interval, caty):
     product_scraped = 0
     for p in range(1,page_numbers+1):
         
-        url = url.split("page")[0]+f"page={p}"
-        print(url)
-        html = requests.get(url)
+        urln = url.split("page")[0]+f"page={p}"
+        print(urln)
+        html = requests.get(urln)
         soup = BeautifulSoup(html.content,'html.parser')
         products = soup.find_all("div", {"class":"product-container"})
         
@@ -106,6 +106,7 @@ def niceonesa_scrape(url, products_number, repetition_interval, caty):
                 catygorie=caty,
                 scraped_from=url.replace('/', 'y'),
                 added_from="niceonesa",
+                first_img = img,
                 duration=repetition_interval,
                 description=desc
                 )

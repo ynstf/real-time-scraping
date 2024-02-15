@@ -2,6 +2,24 @@
 from django.db import models
 
 
+class CvaleyAction(models.Model):
+    url = models.CharField(max_length=400)
+    products_number = models.IntegerField()
+    repetition_interval = models.IntegerField()
+    Category = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, default='Not Started')
+    def __str__(self):
+        return self.url
+
+class ExtraAction(models.Model):
+    url = models.CharField(max_length=400)
+    products_number = models.IntegerField()
+    repetition_interval = models.IntegerField()
+    Category = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, default='Not Started')
+    def __str__(self):
+        return self.url
+    
 class NiceonesaAction(models.Model):
     url = models.CharField(max_length=400)
     products_number = models.IntegerField()
@@ -48,6 +66,7 @@ class Product(models.Model):
     added_from = models.CharField(max_length=50, blank=True, null=True)
     duration = models.IntegerField(blank=True, null=True)
 
+    first_img = models.URLField(blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
 
 

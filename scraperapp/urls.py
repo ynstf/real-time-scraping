@@ -5,6 +5,9 @@ from .views import deraah_scraper,deraah_start_scraper,deraah_get_scraper_status
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .views import cvaley_scraper, cvaley_start_scraper, cvaley_get_scraper_status, cvaley_task_status, cvaley_stop_task, cvaley_get_task_status
+from .views import extra_scraper, extra_start_scraper, extra_get_scraper_status, extra_task_status, extra_stop_task, extra_get_task_status
+
 urlpatterns = [
     
     # general pages
@@ -35,6 +38,23 @@ urlpatterns = [
     path('niceonesa_task_status/', niceonesa_task_status, name='niceonesa_task_status'),
     path('niceonesa_stop_task/', niceonesa_stop_task, name='niceonesa_stop_task'),
     path('niceonesa_get_task_status/<str:url>/', niceonesa_get_task_status, name='niceonesa_get_task_status'),
+
+    # cvaley pages
+    path('cvaley/', cvaley_scraper, name='cvaley_scraper'),
+    path('cvaley_start_scraper/', cvaley_start_scraper, name='cvaley_start_scraper'),
+    path('cvaley_get_scraper_status/', cvaley_get_scraper_status, name='cvaley_get_scraper_status'),
+    path('cvaley_task_status/', cvaley_task_status, name='cvaley_task_status'),
+    path('cvaley_stop_task/', cvaley_stop_task, name='cvaley_stop_task'),
+    path('cvaley_get_task_status/<str:url>/', cvaley_get_task_status, name='cvaley_get_task_status'),
+
+
+    # extra pages
+    path('extra/', extra_scraper, name='extra_scraper'),
+    path('extra_start_scraper/', extra_start_scraper, name='extra_start_scraper'),
+    path('extra_get_scraper_status/', extra_get_scraper_status, name='extra_get_scraper_status'),
+    path('extra_task_status/', extra_task_status, name='extra_task_status'),
+    path('extra_stop_task/', extra_stop_task, name='extra_stop_task'),
+    path('extra_get_task_status/<str:url>/', extra_get_task_status, name='extra_get_task_status'),
 
 
 

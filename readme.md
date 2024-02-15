@@ -71,11 +71,35 @@ https://www.bacancytechnology.com/qanda/qa-automation/configuring-geckodriver-in
 
 
 
+!!! (
+    اي هيرب  - https://sa.iherb.com/
+
+)
+
 درعة* 	https://www.deraahstore.com/
 نايس ون* 	niceonesa.com
-اكسترا	https://www.extra.com/
+اكسترا* - https://www.extra.com/ar-sa/
+سيفالي* - https://cvaley.com/ar/
+
+
+
+تيمو - https://www.temu.com/sa
+نون - https://www.noon.com/saudi-ar/
+
+اديداس - https://www.adidas.sa/ar
+نايك - https://www.nike.sa/ar/home
+نمشي - https://www.namshi.com/saudi-ar/
+
+سنتربوينت - https://www.centrepointstores.com/sa/ar
+ماكس - https://www.maxfashion.com/sa/ar/
+ساكو - https://www.saco.sa/ar/
+
+جرير - https://www.jarir.com/sa-ar/
+إيكيا - https://www.ikea.com/sa/ar/
+هوم سنتر - https://www.homecentre.com/sa/ar/
+هوم بوكس - https://www.homeboxstores.com/sa/ar
+
 ردسي	https://redsea.com/
-جرير	www.jarir.com
 النهدي	https://www.nahdionline.com/
 الدواء	https://www.al-dawaa.com/
 بندة	https://panda.com.sa/
@@ -83,4 +107,4 @@ https://www.bacancytechnology.com/qanda/qa-automation/configuring-geckodriver-in
 كارفور	www.carrefourksa.com
 لولو	https://www.luluhypermarket.com/
 العثيم	https://www.othaimmarkets.com/
-نون	https://www.noon.com/ 
+أمازون - https://www.amazon.sa

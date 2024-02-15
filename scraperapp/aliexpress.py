@@ -16,25 +16,20 @@ logger = logging.getLogger(__name__)
 
 os.environ['WDM_LOG'] = str(logging.DEBUG)
 
-def scrape(url, products_number, repetition_interval, caty):
+def scrape(url, products_number, repetition_interval, caty,driver):
     print("hii")
     
     try :
         logger.error("open drive")
 
+        
 
-        firefox_options = webdriver.FirefoxOptions()
-        firefox_options.add_argument('--no-sandbox')
-        firefox_options.add_argument('--headless')
-        firefox_options.add_argument('--disable-dev-shm-usage')
-        driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options=firefox_options)
-        time.sleep(3)
+        time.sleep(7)
 
         # Open the webpage
         driver.get(url)
 
         logger.error(f"i get : {url}")
-
 
         """change the region and currency"""
         try:
@@ -43,18 +38,21 @@ def scrape(url, products_number, repetition_interval, caty):
             # Click on the element
             element.click()
             time.sleep(1)
+            logger.error("Clicked on ship-to--menuItem--WdBDsYl")
             # Find the element by class name
             element = driver.find_element(By.CLASS_NAME, "select--text--1b85oDo")
             # Click on the element
             element.click()
             time.sleep(1)
+            logger.error("Clicked on select--text--1b85oDo")
             # Wait for the element to be clickable
             element = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, 'span.country-flag-y2023.SA'))
+                EC.element_to_be_clickable((By.CSS_SELECTOR, 'span.country-flag-y2023 SA'))
             )
             # Click on the element
             element.click()
             time.sleep(1)
+            logger.error("Clicked on span.country-flag-y2023 SA")
             show_more_button = WebDriverWait(driver, 6).until(
                             EC.element_to_be_clickable((By.XPATH, '//*[contains(text(), "USD ( الدولار الأمريكي )")]'))
                         )
@@ -72,8 +70,8 @@ def scrape(url, products_number, repetition_interval, caty):
 
 
             logger.error("language and currency changed to saudi")
-        except:
-            logger.error("Error in change to saudi task")
+        except Exception as error:
+            logger.error(f"Error in change to saudi task ${type(error).__name__} ${error}")
         
         time.sleep(3)
         driver.get(url)
@@ -86,7 +84,7 @@ def scrape(url, products_number, repetition_interval, caty):
             #current_url = f"{url}&page={p}"
             #current_url=f"https://ar.aliexpress.com/w/wholesale-%D9%82%D8%A8%D8%B9%D8%A9-%D9%85%D8%B6%D8%AD%D9%83%D8%A9.html?isFromCategory=y&categoryUrlParams=%7B%22q%22%3A%22%D9%82%D8%A8%D8%B9%D8%A9+%D9%85%D8%B6%D8%AD%D9%83%D8%A9%22%2C%22s%22%3A%22qp_nw%22%2C%22osf%22%3A%22categoryNagivateOld%22%2C%22sg_search_params%22%3A%22on___%2528%2520prism_tag_id%253A%25271000342180%2527%2520%2529%22%2C%22guide_trace%22%3A%2216aeb945-7528-4faa-8ed1-79406b7d038b%22%2C%22scene_id%22%3A%2230630%22%2C%22searchBizScene%22%3A%22openSearch%22%2C%22recog_lang%22%3A%22ar%22%2C%22bizScene%22%3A%22categoryNagivateOld%22%2C%22guideModule%22%3A%22unknown%22%2C%22postCatIds%22%3A%22200000297%2C36%2C1501%2C18%2C200003922%22%2C%22scene%22%3A%22category_navigate%22%7D&page={p}&g=y&SearchText=%D9%82%D8%A8%D8%B9%D8%A9+%D9%85%D8%B6%D8%AD%D9%83%D8%A9"
             current_url = f"{url}&page={p}"
-            logger.info(f"Processing URL: {current_url} in page = {p}")
+            logger.error(f"Processing URL: {current_url} in page = {p}")
             driver.get(current_url)
             scroll_step = 700  # Adjust this value to control the scrolling distance
 
@@ -186,12 +184,13 @@ def scrape(url, products_number, repetition_interval, caty):
             print(len(product_info))
             p+=1
         # Close the WebDriver after scraping
+        driver.close()
         driver.quit()
 
     except Exception as e:
         logger.error(f"Error in scrape_products: {e}")
         print(e)
         raise
-    logger.info("Scraping completed successfully")
+    logger.error("Scraping completed successfully")
 
 

@@ -1,0 +1,199 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Add these links for Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Add these scripts for jQuery and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-XpaeUJ0uE5wpxJ/NlRSVlZ9RvcdGpTT+N4NnGELByHAIvXHjZ41gA2uvqA+quNQ8" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <title>Cvaley Scraper</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        button {
+            margin-bottom: 20px;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+        }
+
+        .statusDiv, .stopScraper {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="card-container">
+        {% if tasks_run %}
+            {% for task in tasks_run %}
+                <div class="card">
+                    <form id="scraperForm{{ forloop.counter }}" method="post" action="{% url 'cvaley_start_scraper' %}">
+                        {% csrf_token %}
+                        <label for="url">Cvaley Products URL:</label>
+                        <label>{{ task.url }}</label><br>
+                        
+                        <label for="products_number">number of products:</label>
+                        <label>{{ task.products_number }}</label><br>
+
+                        <label for="repetition_interval">Repetition Interval (minutes):</label>
+                        <label>{{ task.repetition_interval }}</label><br>
+
+                        <label for="repetition_interval">Category :</label>
+                        <label>{{ task.Category }}</label><br>
+
+                        <!-- Your existing form content here -->
+                    </form>
+
+                    
+                    <button type="button" class="stopScraper btn btn-danger btn-sm" data-url="{{ task.url }}">Stop Scraper</button>
+
+
+                    <div class="statusDiv">
+                        <p>Status: <span class="status">Not Started</span></p>
+                        {% if task.url %}
+                            Check the results <a class="resultLink" href='{% url "result" url=task.url|replace_char:"/,y" %}'>Results</a>.
+                        {% else %}
+                            Refresh the page to see URL
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <button type="button" class="btn btn-success btn-sm" id="newPage">New Page</button>
+
+    
+
+    <script>
+        $(document).ready(function () {
+            // Function to start the scraper
+            $(document).on("click", ".startScraper", function () {
+                $(this).prop('disabled', true);
+
+                // Make an AJAX request to start the scraper for the specific form
+                var form = $(this).closest("form");
+                $.post("{% url 'cvaley_start_scraper' %}", form.serialize(), function (data) {
+                    if (data.status === 'started' || data.status === 'already_running') {
+                        form.find(".status").text('Scraping has started. Check the results.');
+                        form.find(".statusDiv").show();
+                        form.find(".stopScraper").show();
+                        form.find(".startScraper").hide();
+                        // Reload the page after stopping the scraper
+                        location.reload(true);
+                    } else {
+                        console.error("Error starting scraper");
+                    }
+                });
+            });
+
+            // Function to stop the scraper
+            $(document).on("click", ".stopScraper", function () {
+                var url = $(this).data('url');
+                var form = $(this).closest("form");
+                $.get("{% url 'cvaley_stop_task' %}", { url: url }, function (data) {
+                    if (data.status === 'stopped') {
+                        form.find(".status").text('Scraping for URL ' + url + ' has been stopped.');
+                        form.find(".statusDiv").show();
+                        form.find(".stopScraper").hide();
+                        form.find(".startScraper").show();
+                        console.log("good!");
+                        // Reload the page after stopping the scraper
+                        location.reload(true);
+                    } else {
+                        console.error("Error stopping scraper");
+                    }
+                });
+            });
+
+            // Function to create a new form
+        $("#newPage").click(function () {
+            // Create a new form container if it doesn't exist
+            if ($("#formContainer").length === 0) {
+                $("<div>").attr("id", "formContainer").addClass("card-container").appendTo("body");
+            }
+
+            // Create a new form
+            var newForm = $("<form>").attr({
+                "id": "scraperForm" + ($("form").length + 1),  // Generate a unique ID
+                "method": "post",
+                "action": "{% url 'cvaley_start_scraper' %}",
+                "class": "card"  // Add Bootstrap card class
+            });
+
+            // Append form fields
+            newForm.append('<div class="card-body"><label for="url">Enter cvaley Products URL:</label><input type="text" name="url" required><br>');
+            newForm.append('<label for="products_number">Enter number of products:</label><input type="number" name="products_number" value="10" required><br>');
+            newForm.append('<label for="repetition_interval">Repetition Interval (minutes):</label><input type="number" id="repetition_interval" name="repetition_interval" value="5" required><br>');
+            newForm.append('<label for="repetition_interval">Category :</label><input type="text" name="caty" required><br>');
+            newForm.append('<button type="button" class="startScraper btn btn-primary btn-sm">Start Scraper</button>');
+
+            // Create "Stop Scraper" button
+            var stopButton = $('<button type="button" class="stopScraper btn btn-danger btn-sm" style="display: none;">Stop Scraper</button>');
+            stopButton.data('url', '');  // Set the URL dynamically
+            newForm.append(stopButton);
+
+            // Create "statusDiv"
+            newForm.append('<div class="statusDiv" style="display: none;">' +
+                '<p>Status: <span class="status">Not Started</span></p>' +
+                `{% if task.url %}
+                    Check the results <a class="resultLink" href='{% url "result" url=task.url|replace_char:"/,y" %}'>Results</a>.
+                {% else %}
+                    Refresh the page to see URL
+                {% endif %}`
+                +
+                '</div></div>');  // Close the card-body div
+
+            // Append the new form to the form container
+            newForm.appendTo("#formContainer");
+
+        });
+
+            // Function to check the scraper status on page load
+            function checkScraperStatus() {
+                $.get("{% url 'cvaley_get_scraper_status' %}", function (data) {
+                    if (data.status === 'started') {
+                        $(".status").text('Scraping is in progress. Check the results.');
+                        $(".statusDiv").show();
+                        $(".stopScraper").show();
+                    } else {
+                        $(".status").text('Not Started');
+                        $(".statusDiv").hide();
+                        $(".stopScraper").hide();
+                    }
+                });
+            }
+
+            // Check the scraper status on page load
+            checkScraperStatus();
+        });
+    </script>
+
+
+</body>
+</html>

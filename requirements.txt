@@ -15,3 +15,5 @@ gunicorn
 urllib3
 Werkzeug
 webdriver_manager==3.8.4
+httpx
+nest_asyncio
