@@ -538,10 +538,12 @@ def cvaley_scrape_products(url, products_number, repetition_interval,caty):
         else:
             break
 
-        options = webdriver.FirefoxOptions()
-        #options.add_argument("--headless")  # Run the browser in headless mode
-        options.add_argument("--window-size=1920,1080")  # Set the window size
-        driver = webdriver.Firefox(options=options)
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+
+        driver = webdriver.Chrome(options=chrome_options)
 
         cvaley_scrape(url, products_number, repetition_interval,caty,driver)
         driver.quit()
@@ -675,10 +677,12 @@ def extra_scrape_products(url, products_number, repetition_interval,caty):
             break
 
         
-        options = webdriver.FirefoxOptions()
-        #loptions.add_argument("--headless")  # Run the browser in headless mode
-        options.add_argument("--window-size=1920,1080")  # Set the window size
-        driver = webdriver.Firefox(options=options)
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+
+        driver = webdriver.Chrome(options=chrome_options)
 
         extra_scrape(url, products_number, repetition_interval,caty,driver)
 
